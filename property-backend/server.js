@@ -4,10 +4,11 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 
 global.Property = require('./api/models/propertyModel')
+
 const routes = require('./api/routes/propertyRoutes')
+const userRoutes = require('./api/routes/userRoutes')
 
 mongoose.Promise = global.Promise
-// mongoose.set('useFindAndModify', false)
 mongoose.connect('mongodb://localhost/PropertyApp', { useNewUrlParser: true })
 
 const port = process.env.PORT || 4000
@@ -20,6 +21,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 routes(app)
+app.use(userRoutes)
+
+// routes(app)
 app.listen(port)
 
 app.use((req, res) => {

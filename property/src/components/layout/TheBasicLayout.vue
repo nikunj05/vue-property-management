@@ -22,12 +22,27 @@
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Property Admin Dashboard</v-toolbar-title>
+      <div class="flex justify-between w-full">
+        <v-toolbar-title>Property Admin Dashboard</v-toolbar-title>
+        <v-btn color="primary" @click="logout">logout</v-btn>
+      </div>
     </v-app-bar>
 
     <v-main class="mx-2 my-2">
       <router-view />
     </v-main>
+
+    <div
+      v-if="message"
+      class="fixed top-0 left-0 flex justify-end w-full h-full modal"
+    >
+      <div
+        class="absolute top-0 w-full h-full bg-gray-900 opacity-50 modal-overlay"
+      ></div>
+      <div class="w-96">
+        <v-alert v-if="alert" :type="alert" dismissible>{{ message }}</v-alert>
+      </div>
+    </div>
   </v-app>
 </template>
 
@@ -36,6 +51,8 @@ export default {
   data() {
     return {
       drawer: null,
+      alert: '',
+      message: '',
       items: [
         {
           title: 'Dashboard',
@@ -45,6 +62,15 @@ export default {
         { title: 'Property', icon: 'mdi-image', to: '/admin/properties' },
       ],
     }
+  },
+
+  methods: {
+    logout() {
+      localStorage.removeItem('token')
+      this.alert = 'success'
+      this.message = 'Logout successfully.'
+      this.$router.push('/login')
+    },
   },
 }
 </script>
