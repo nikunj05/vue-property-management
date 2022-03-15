@@ -65,7 +65,7 @@
       </v-container>
     </v-main>
     <div
-      v-if="message"
+      v-if="isAlert"
       class="fixed top-0 left-0 flex justify-end w-full h-full modal"
     >
       <div
@@ -95,6 +95,7 @@ export default {
       },
       alert: '',
       message: '',
+      isAlert: false,
     }
   },
 
@@ -129,15 +130,20 @@ export default {
         axios
           .post('http://localhost:4000/signin', this.formData)
           .then((res) => {
-            localStorage.setItem('token', res.data.token)
-
+            console.log(res)
+            localStorage.setItem('token', res.data.data.token)
+            localStorage.setItem('userId', res.data.data.userData._id)
             this.alert = 'success'
             this.message = 'Login Successfully.'
             this.$router.push('/admin')
           })
           .catch((err) => {
-            this.alert = 'error'
-            this.message = 'Invalid Credentials.'
+            if (err) {
+              this.isAlert = true
+              this.alert = 'error'
+              this.message = 'Invalid Credentials.'
+              setTimeout((this.isAlert = false), 2000)
+            }
             console.log(err)
           })
       }

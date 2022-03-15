@@ -196,6 +196,7 @@ export default {
       gallery: [],
       coordinates: [],
       region: '',
+      userId: '',
     },
   }),
 
@@ -280,6 +281,8 @@ export default {
     submit() {
       this.$v.$touch()
       if (this.formData) {
+        const id = localStorage.getItem('userId')
+        this.formData.userId = id
         axios.post('http://localhost:4000/properties', this.formData)
         this.$router.push('/admin/properties')
       }

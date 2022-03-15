@@ -23,7 +23,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <div class="flex justify-between w-full">
-        <v-toolbar-title>Property Admin Dashboard</v-toolbar-title>
+        <v-toolbar-title v-if="name">{{ name }} Dashboard</v-toolbar-title>
         <v-btn color="primary" @click="logout">logout</v-btn>
       </div>
     </v-app-bar>
@@ -47,10 +47,13 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
       drawer: null,
+      name: '',
       alert: '',
       message: '',
       items: [
@@ -64,9 +67,17 @@ export default {
     }
   },
 
+  mounted() {
+    const id = localStorage.getItem('userId')
+    axios.get(`http://localhost:4000/me?id=${id}`).then((res) => {
+      this.name = res.data.data.name
+    })
+  },
+
   methods: {
     logout() {
       localStorage.removeItem('token')
+      localStorage.removeItem('userId')
       this.alert = 'success'
       this.message = 'Logout successfully.'
       this.$router.push('/login')

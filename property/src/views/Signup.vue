@@ -79,14 +79,16 @@
       </v-container>
     </v-main>
     <div
-      v-if="message || isAlert"
+      v-show="isAlert"
       class="fixed top-0 left-0 flex justify-end w-full h-full modal"
     >
       <div
         class="absolute top-0 w-full h-full bg-gray-900 opacity-50 modal-overlay"
       ></div>
       <div class="w-96">
-        <v-alert v-if="alert" :type="alert" dismissible>{{ message }}</v-alert>
+        <v-alert v-if="alert" dense text :type="alert" dismissible>{{
+          message
+        }}</v-alert>
       </div>
     </div>
   </v-app>
@@ -172,10 +174,12 @@ export default {
             this.$router.push('/login')
           })
           .catch((err) => {
-            this.alert = 'error'
-            this.message = 'There are some error.'
-            setTimeout((this.isAlert = true), 2000)
-            this.isAlert = false
+            if (err) {
+              this.isAlert = true
+              this.alert = 'error'
+              this.message = 'There are some error.'
+              setTimeout((this.isAlert = false), 2000)
+            }
             console.log(err)
           })
       }

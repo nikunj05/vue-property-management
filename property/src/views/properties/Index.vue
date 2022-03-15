@@ -6,7 +6,7 @@
         Create
       </v-btn>
     </div>
-    <v-row>
+    <v-row v-if="properties.length">
       <v-col v-for="(property, i) in properties" :key="i" cols="4">
         <v-card max-width="400">
           <v-img
@@ -37,6 +37,11 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row v-else>
+      <v-col class="flex justify-center my-10 font-bold text-gray-900">
+        There are no properties.
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script>
@@ -47,9 +52,11 @@ export default {
       properties: [],
     }
   },
+
   created() {
     axios.get('http://localhost:4000/properties').then((res) => {
-      this.properties = res.data
+      const id = localStorage.getItem('userId')
+      this.properties = res.data.filter((property) => property.userId == id)
     })
   },
 }

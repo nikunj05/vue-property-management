@@ -49,7 +49,6 @@ class AuthController {
   }
 
   static getUserDetails = async (req, res) => {
-    console.log(req.query, 'req')
     User.findById(req.query.id, (err, user) => {
       if (err) res.send(err)
       res.status(200).send({ data: user })
