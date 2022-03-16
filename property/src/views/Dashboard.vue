@@ -1,5 +1,6 @@
 <template>
-  <div v-if="userDetail" class="font-weight-bold text-h5">
+  <div>Dashboard</div>
+  <!-- <div v-if="userDetail" class="font-weight-bold text-h5">
     <v-card class="" max-width="344">
       <v-img
         src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
@@ -10,11 +11,11 @@
 
       <v-card-subtitle> {{ userDetail.email }} </v-card-subtitle>
     </v-card>
-  </div>
+  </div> -->
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 
 export default {
   data() {
@@ -25,10 +26,10 @@ export default {
   },
 
   mounted() {
-    const id = localStorage.getItem('userId')
-    axios.get(`http://localhost:4000/me?id=${id}`).then((res) => {
-      this.userDetail = res.data.data
-    })
+    // const id = localStorage.getItem('userId')
+    // axios.get(`http://localhost:4000/me?id=${id}`).then((res) => {
+    //   this.userDetail = res.data.data
+    // })
   },
 }
 </script>

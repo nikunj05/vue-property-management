@@ -152,17 +152,29 @@
         </div>
       </form>
     </v-card>
+
+    <Notification :show="show" :message="message" :type="type" />
   </div>
 </template>
 <script>
 import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
 import axios from 'axios'
+import { mapActions } from 'vuex'
+import Notification from '@/components/Notification.vue'
 
 export default {
   mixins: [validationMixin],
 
+  components: {
+    Notification,
+  },
+
   data: () => ({
+    show: false,
+    message: '',
+    type: '',
+
     items: [
       {
         text: 'Dashboard',
@@ -278,12 +290,29 @@ export default {
   },
 
   methods: {
+    ...mapActions(['addProperty']),
+
     submit() {
       this.$v.$touch()
       if (this.formData) {
         const id = localStorage.getItem('userId')
         this.formData.userId = id
-        axios.post('http://localhost:4000/properties', this.formData)
+
+        this.addProperty(this.formData)
+          .then((res) => {
+            if (res) {
+              this.show = true
+              this.message = 'Property created successfully.'
+              this.type = 'success'
+            }
+          })
+          .catch((err) => {
+            if (err) {
+              this.show = true
+              this.type = 'error'
+              this.message = 'There are some error.'
+            }
+          })
         this.$router.push('/admin/properties')
       }
     },

@@ -49,10 +49,12 @@ class AuthController {
   }
 
   static getUserDetails = async (req, res) => {
-    User.findById(req.query.id, (err, user) => {
-      if (err) res.send(err)
-      res.status(200).send({ data: user })
-    })
+    if (req.query.id) {
+      User.findById(req.query.id, (err, user) => {
+        if (err) res.send(err)
+        res.status(200).send({ data: user })
+      })
+    }
   }
 }
 

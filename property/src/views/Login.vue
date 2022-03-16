@@ -47,10 +47,6 @@
                     Login
                   </v-btn>
                   <v-card-actions class="text--secondary">
-                    <v-checkbox
-                      color="#000000"
-                      label="Remember me"
-                    ></v-checkbox>
                     <v-spacer></v-spacer>
                     No account?
                     <router-link to="/signup" class="pl-2 font-weight-black">
@@ -64,17 +60,7 @@
         </v-row>
       </v-container>
     </v-main>
-    <div
-      v-if="isAlert"
-      class="fixed top-0 left-0 flex justify-end w-full h-full modal"
-    >
-      <div
-        class="absolute top-0 w-full h-full bg-gray-900 opacity-50 modal-overlay"
-      ></div>
-      <div class="w-96">
-        <v-alert v-if="alert" :type="alert" dismissible>{{ message }}</v-alert>
-      </div>
-    </div>
+    <Notification :show="isAlert" :message="isMessage" :type="isType" />
   </v-app>
 </template>
 
@@ -82,20 +68,26 @@
 import axios from 'axios'
 import { validationMixin } from 'vuelidate'
 import { required, minLength } from 'vuelidate/lib/validators'
+import { mapActions } from 'vuex'
+import Notification from '@/components/Notification.vue'
 
 export default {
   name: 'Login',
   mixins: [validationMixin],
 
+  components: {
+    Notification,
+  },
+
   data() {
     return {
+      isAlert: false,
+      isType: '',
+      isMessage: '',
       formData: {
         email: '',
         password: '',
       },
-      alert: '',
-      message: '',
-      isAlert: false,
     }
   },
 
@@ -124,6 +116,8 @@ export default {
   },
 
   methods: {
+    ...mapActions(['showNotification']),
+
     loginData() {
       this.$v.$touch()
       if (this.formData) {
@@ -133,16 +127,16 @@ export default {
             console.log(res)
             localStorage.setItem('token', res.data.data.token)
             localStorage.setItem('userId', res.data.data.userData._id)
-            this.alert = 'success'
-            this.message = 'Login Successfully.'
+            this.isAlert = true
+            this.isType = 'success'
+            this.isMessage = 'Login Successfully.'
             this.$router.push('/admin')
           })
           .catch((err) => {
             if (err) {
               this.isAlert = true
-              this.alert = 'error'
-              this.message = 'Invalid Credentials.'
-              setTimeout((this.isAlert = false), 2000)
+              this.isType = 'error'
+              this.isMessage = 'Invalid Credentials.'
             }
             console.log(err)
           })

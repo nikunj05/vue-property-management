@@ -69,7 +69,9 @@
                   <v-card-actions class="text--secondary">
                     <v-spacer></v-spacer>
                     Already have an account?
-                    <router-link to="/login" class="ml-2">Sign Up</router-link>
+                    <router-link to="/login" class="ml-2 font-weight-black"
+                      >Sign In</router-link
+                    >
                   </v-card-actions>
                 </form>
               </v-card-text>
@@ -78,19 +80,8 @@
         </v-row>
       </v-container>
     </v-main>
-    <div
-      v-show="isAlert"
-      class="fixed top-0 left-0 flex justify-end w-full h-full modal"
-    >
-      <div
-        class="absolute top-0 w-full h-full bg-gray-900 opacity-50 modal-overlay"
-      ></div>
-      <div class="w-96">
-        <v-alert v-if="alert" dense text :type="alert" dismissible>{{
-          message
-        }}</v-alert>
-      </div>
-    </div>
+
+    <Notification :show="show" :message="message" :type="type" />
   </v-app>
 </template>
 
@@ -98,10 +89,14 @@
 import axios from 'axios'
 import { validationMixin } from 'vuelidate'
 import { required, minLength, sameAs } from 'vuelidate/lib/validators'
+import Notification from '@/components/Notification.vue'
 
 export default {
   name: 'Signup',
   mixins: [validationMixin],
+  components: {
+    Notification,
+  },
 
   data() {
     return {
@@ -111,9 +106,9 @@ export default {
         password: '',
         confirmPassword: '',
       },
-      alert: '',
+      type: '',
       message: '',
-      isAlert: false,
+      show: false,
     }
   },
 
@@ -169,16 +164,18 @@ export default {
         axios
           .post('http://localhost:4000/registration', this.formData)
           .then((res) => {
-            this.alert = 'success'
-            this.message = 'Register successfully.'
-            this.$router.push('/login')
+            if (res) {
+              this.show = true
+              this.type = 'success'
+              this.message = 'Register successfully.'
+              this.$router.push('/login')
+            }
           })
           .catch((err) => {
             if (err) {
-              this.isAlert = true
-              this.alert = 'error'
+              this.show = true
+              this.type = 'error'
               this.message = 'There are some error.'
-              setTimeout((this.isAlert = false), 2000)
             }
             console.log(err)
           })

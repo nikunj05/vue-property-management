@@ -14,6 +14,14 @@
           <ul class="hidden space-x-2 md:inline-flex">
             <li>
               <router-link
+                to="/properties"
+                class="px-4 py-2 font-bold text-gray-900 rounded"
+              >
+                Properties
+              </router-link>
+            </li>
+            <li>
+              <router-link
                 to="/signup"
                 class="px-4 py-2 font-bold text-gray-900 rounded"
               >

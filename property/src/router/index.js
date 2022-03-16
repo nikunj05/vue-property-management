@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import AuthMiddleware from '../middleware/auth'
+// import auth from '../middleware/auth'
 
 Vue.use(VueRouter)
 
@@ -27,25 +27,27 @@ const routes = [
   },
   {
     path: '/admin',
+    name: 'admin',
     component: () => import('../components/layout/TheBasicLayout.vue'),
-    meta: {
-      middlware: [AuthMiddleware],
-    },
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'dashboard',
         name: 'dashboard',
         component: () => import('../views/Dashboard.vue'),
+        meta: { requiresAuth: true },
       },
       {
         path: 'properties',
         name: 'property',
         component: () => import('../views/properties/Index.vue'),
+        meta: { requiresAuth: true },
       },
       {
         path: 'properties/create',
         name: 'property',
         component: () => import('../views/properties/Create.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },
@@ -53,6 +55,24 @@ const routes = [
 
 const router = new VueRouter({
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  // See if any of the matched routes has meta "requiresAuth"
+  if (to.matched.some((route) => route.meta.requiresAuth)) {
+    // Yes this route requires authentication. See if the user is authenticated.
+    const token = localStorage.getItem('token')
+    if (token) {
+      // User is authenticated, we allow access.
+      next()
+    } else {
+      // User is not authenticated. We can redirect her to
+      // our login page. Or wherever we want.
+      next('/login')
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

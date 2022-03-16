@@ -22,8 +22,7 @@
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <div class="flex justify-between w-full">
-        <v-toolbar-title v-if="name">{{ name }} Dashboard</v-toolbar-title>
+      <div class="flex justify-end w-full">
         <v-btn color="primary" @click="logout">logout</v-btn>
       </div>
     </v-app-bar>
@@ -32,29 +31,25 @@
       <router-view />
     </v-main>
 
-    <div
-      v-if="message"
-      class="fixed top-0 left-0 flex justify-end w-full h-full modal"
-    >
-      <div
-        class="absolute top-0 w-full h-full bg-gray-900 opacity-50 modal-overlay"
-      ></div>
-      <div class="w-96">
-        <v-alert v-if="alert" :type="alert" dismissible>{{ message }}</v-alert>
-      </div>
-    </div>
+    <Notification :show="show" :message="message" :type="type" />
   </v-app>
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import Notification from '../Notification.vue'
 
 export default {
+  components: {
+    Notification,
+  },
+
   data() {
     return {
+      show: false,
       drawer: null,
       name: '',
-      alert: '',
+      type: '',
       message: '',
       items: [
         {
@@ -62,23 +57,18 @@ export default {
           icon: 'mdi-view-dashboard',
           to: '/admin/dashboard',
         },
-        { title: 'Property', icon: 'mdi-image', to: '/admin/properties' },
+        { title: 'Properties', icon: 'mdi-image', to: '/admin/properties' },
       ],
     }
-  },
-
-  mounted() {
-    const id = localStorage.getItem('userId')
-    axios.get(`http://localhost:4000/me?id=${id}`).then((res) => {
-      this.name = res.data.data.name
-    })
   },
 
   methods: {
     logout() {
       localStorage.removeItem('token')
       localStorage.removeItem('userId')
-      this.alert = 'success'
+      alert()
+      this.show = true
+      this.type = 'success'
       this.message = 'Logout successfully.'
       this.$router.push('/login')
     },

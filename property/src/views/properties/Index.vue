@@ -2,12 +2,12 @@
   <div>
     <div class="d-flex justify-space-between">
       <label for="" class="text-h5">Properties </label>
-      <v-btn depressed color="primary" to="/admin/properties/create">
+      <v-btn depressed color="cyan" to="/admin/properties/create">
         Create
       </v-btn>
     </div>
-    <v-row v-if="properties.length">
-      <v-col v-for="(property, i) in properties" :key="i" cols="4">
+    <v-row v-if="getProperties.length" class="mt-10">
+      <v-col v-for="(property, i) in getProperties" :key="i" cols="4">
         <v-card max-width="400">
           <v-img
             class="white--text align-end"
@@ -45,7 +45,9 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   data() {
     return {
@@ -53,11 +55,29 @@ export default {
     }
   },
 
-  created() {
-    axios.get('http://localhost:4000/properties').then((res) => {
-      const id = localStorage.getItem('userId')
-      this.properties = res.data.filter((property) => property.userId == id)
-    })
+  // created() {
+  //   axios.get('http://localhost:4000/properties').then((res) => {
+  //     const id = localStorage.getItem('userId')
+  //     if (id) {
+  //       this.properties = res.data.filter((property) => property.userId == id)
+  //     }
+  //   })
+  // },
+
+  computed: {
+    ...mapGetters(['getProperties']),
+  },
+
+  mounted() {
+    this.fetchData()
+  },
+
+  methods: {
+    ...mapActions(['fetchProperties']),
+
+    async fetchData() {
+      await this.fetchProperties()
+    },
   },
 }
 </script>
