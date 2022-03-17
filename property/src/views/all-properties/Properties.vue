@@ -64,6 +64,7 @@
                   </div>
                 </div>
               </div>
+
               <div
                 v-if="show"
                 class="fixed top-0 left-0 flex items-center justify-center w-full h-full modal"
@@ -73,7 +74,8 @@
                 ></div>
 
                 <div
-                  class="z-50 w-full mx-auto overflow-y-auto bg-white rounded shadow-lg modal-container sm:max-w-lg lg:max-w-4xl md:max-w-7xl"
+                  class="z-50 w-full mx-auto overflow-y-auto bg-white rounded shadow-lg modal-container sm:max-w-lg lg:max-w-4xl"
+                  style="max-height: 90vh"
                 >
                   <div class="flex justify-end p-2">
                     <svg
@@ -91,7 +93,7 @@
                     </svg>
                   </div>
                   <div v-if="selectedProperty" class="p-4">
-                    <div class="grid grid-cols-12 gap-4 lg:grid-cols-2">
+                    <div class="grid gap-4 lg:grid-cols-2">
                       <v-carousel :show-arrows="false">
                         <v-carousel-item
                           v-for="(item, i) in selectedProperty.gallery"
@@ -150,8 +152,6 @@ export default {
       selectedProperty: null,
       properties: [],
       address: null,
-      lat: -77.04,
-      lng: 38.907,
     }
   },
 
@@ -171,15 +171,32 @@ export default {
     },
 
     initMap() {
-      mapboxgl.accessToken =
-        'pk.eyJ1IjoiaGFzaWkiLCJhIjoiY2wwYWt4cjJ1MDF4YTNjbWptNzZwM2ZhZyJ9.9WUVDkgiL5lsqX95u0VAvA'
+      var map
 
-      const map = new mapboxgl.Map({
+      mapboxgl.accessToken =
+        'pk.eyJ1IjoiYW50ZWxvdmUxOSIsImEiOiJja2d1azl4ZmgwY3dvMnJueGljMnp6YnprIn0.aIRE0Ii2AmWYWCW5Z3cEFg'
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          var lng = position.coords.longitude
+          var lat = position.coords.latitude
+
+          map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [lng, lat],
+            zoom: 12,
+          })
+        })
+      }
+
+      map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [-120.094292506456, 48.0250054263],
         zoom: 4,
       })
+
       let hoveredStateId = null
 
       // Add the control to the map.
@@ -337,10 +354,6 @@ export default {
             )
           }
           hoveredStateId = null
-        })
-
-        map.on('click', 'state-fills', (e) => {
-          // console.log(e.features[0].properties)
         })
       })
     },
