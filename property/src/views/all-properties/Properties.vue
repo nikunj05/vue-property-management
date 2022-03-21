@@ -28,37 +28,38 @@
           <div class="mt-10 space-y-6 xl:mt-0 sm:px-6 lg:px-0 lg:col-span-6">
             <div class="grid w-full gap-5 lg:grid-cols-2">
               <div
-                v-for="(property, i) in properties"
-                :key="i"
+                v-if="propertyIndex < properties.length"
+                v-for="propertyIndex in propertyToShow"
                 class="flex flex-col overflow-hidden rounded-lg shadow-lg"
-                @click="openProperty(property)"
+                @click="openProperty(properties[propertyIndex])"
               >
                 <div class="flex-shrink-0">
                   <img
                     class="object-cover w-full h-48"
-                    :src="property.main_image"
+                    :src="properties[propertyIndex].main_image"
                     alt=""
                   />
                 </div>
                 <div
                   class="p-4 text-lg font-medium capitalize bg-slate-200 opacity-70"
                 >
-                  {{ property.title }}
+                  {{ properties[propertyIndex].title }}
                 </div>
                 <div class="flex flex-col justify-between flex-1 p-6 bg-white">
                   <div class="flex-1">
                     <p class="text-base font-medium text-indigo-600">
                       <a href="#" class="hover:underline">
-                        $ {{ property.price }}
+                        $ {{ properties[propertyIndex].price }}
                       </a>
                     </p>
                     <a href="#" class="block mt-2">
                       <p class="text-xl font-semibold text-gray-900">
-                        {{ property.bhk }} BHK {{ property.sqft }} SQFT home for
-                        {{ property.home_type }}
+                        {{ properties[propertyIndex].bhk }} BHK
+                        {{ properties[propertyIndex].sqft }} SQFT home for
+                        {{ properties[propertyIndex].home_type }}
                       </p>
                       <p class="mt-3 text-base text-gray-500">
-                        {{ property.facts_features }}
+                        {{ properties[propertyIndex].facts_features }}
                       </p>
                     </a>
                   </div>
@@ -135,6 +136,14 @@
                 </div>
               </div>
             </div>
+            <button
+              type="button"
+              class="inline-flex items-center px-4 py-2 text-sm font-medium bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              @click="propertyToShow += 3"
+              style="color: #fff"
+            >
+              Show More Properties
+            </button>
           </div>
         </div>
       </div>
@@ -152,6 +161,7 @@ export default {
       selectedProperty: null,
       properties: [],
       address: null,
+      propertyToShow: 3,
     }
   },
 
