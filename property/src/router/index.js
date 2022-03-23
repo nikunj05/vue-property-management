@@ -18,11 +18,6 @@ const routes = [
   {
     path: '/',
     name: 'properties',
-    component: () => import('../views/all-properties/AllProperties.vue'),
-  },
-  {
-    path: '/properties',
-    name: 'all-property',
     component: () => import('../views/all-properties/Properties.vue'),
   },
   {

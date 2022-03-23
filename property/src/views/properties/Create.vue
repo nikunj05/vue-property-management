@@ -209,6 +209,7 @@ export default {
       coordinates: [],
       region: '',
       userId: '',
+      district: '',
     },
   }),
 
@@ -371,13 +372,31 @@ export default {
       // Add geocoder result to container.
       geocoder.on('result', (e) => {
         results.innerText = JSON.stringify(e.result, null, 2)
+
+        console.log(e.result)
+
+        const regionName = e.result.context.find((con) => {
+          var region = con.id
+          region = region.substring(0, region.indexOf('.'))
+          if (region === 'region') {
+            return con
+          }
+        })
+
+        const districtName = e.result.context.find((con) => {
+          var district = con.id
+          district = district.substring(0, district.indexOf('.'))
+          if (district === 'district') {
+            return con
+          }
+        })
+
         this.formData.coordinates = e.result.geometry.coordinates
         this.formData.address = e.result.place_name
-        this.formData.region = e.result.context[1].text
-          ? e.result.context[1].text
-          : e.result.text
-
-        console.log(e.result.context)
+        this.formData.region = regionName.text
+        this.formData.district = districtName.text
+        console.log(this.formData.district)
+        console.log(this.formData.region)
       })
 
       // Clear results container when search is cleared.

@@ -28,7 +28,9 @@
     </v-app-bar>
 
     <v-main class="mx-2 my-2">
-      <router-view />
+      <div class="max-h-screen py-10 my-3 overflow-y-scroll lg:h-5/6">
+        <router-view />
+      </div>
     </v-main>
 
     <Notification :show="show" :message="message" :type="type" />

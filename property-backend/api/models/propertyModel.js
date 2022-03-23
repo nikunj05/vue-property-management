@@ -37,6 +37,9 @@ const propertySchema = new Schema(
     region: {
       type: String,
     },
+    district: {
+      type: String,
+    },
     userId: {
       type: String,
     },

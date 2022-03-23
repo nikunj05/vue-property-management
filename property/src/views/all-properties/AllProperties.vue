@@ -2,7 +2,6 @@
 <template>
   <div class="bg-white">
     <!-- Header -->
-
     <header class="sticky top-0 z-30 w-full px-2 py-4 shadow-xl sm:px-4">
       <div class="flex items-center justify-between mx-auto max-w-7xl">
         <a href="#">
