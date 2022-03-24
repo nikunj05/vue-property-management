@@ -132,22 +132,25 @@
             {{ properties.length }} Properties Available
           </span>
           <span v-else> There are no properties yet. </span>
-          <div class="grid grid-cols-4 gap-2">
-            <div v-for="(prop, index) in properties" :key="index">
+          <div
+            v-if="regions.length"
+            class="grid h-24 grid-cols-8 gap-6 my-4 overflow-y-auto"
+          >
+            <div v-for="(prop, index) in regions" :key="index">
               <button
-                v-if="prop.region"
+                v-show="prop.region"
                 id="state"
                 type="button"
                 class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 style="color: #fff"
-                @click="locateAddress(prop.coordinates, properties)"
+                @click="locateAddress(prop.coordinates, regions)"
               >
                 {{ prop.region }}
               </button>
             </div>
           </div>
         </div>
-        <div class="grid w-full gap-5 md:grid-cols-2">
+        <div class="grid w-full gap-2 md:grid-cols-2">
           <div
             v-if="propertyIndex < properties.length"
             v-for="propertyIndex in propertyToShow"
@@ -279,7 +282,7 @@ export default {
       properties: [],
       address: null,
       propertyToShow: 3,
-      states: [],
+      regions: [],
     }
   },
 
@@ -287,9 +290,18 @@ export default {
     axios.get('http://localhost:4000/properties').then((res) => {
       if (res) {
         this.properties = res.data
-
-        console.log(this.properties.map((prop) => prop.region === prop.region))
         this.initMap(this.properties)
+
+        var resArr = []
+        this.properties.filter(function (item) {
+          var i = resArr.findIndex((x) => x.region == item.region)
+          if (i <= -1) {
+            resArr.push(item)
+          }
+          return null
+        })
+
+        this.regions = resArr
       }
     })
   },
