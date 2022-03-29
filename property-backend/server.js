@@ -7,6 +7,7 @@ global.Property = require('./api/models/propertyModel')
 
 const routes = require('./api/routes/propertyRoutes')
 const userRoutes = require('./api/routes/userRoutes')
+const inquiryRoutes = require('./api/routes/inquiryRoutes')
 
 mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/PropertyApp', { useNewUrlParser: true })
@@ -22,6 +23,7 @@ app.use(bodyParser.json())
 
 routes(app)
 app.use(userRoutes)
+app.use(inquiryRoutes)
 
 // routes(app)
 app.listen(port)

@@ -46,6 +46,8 @@ export default new Vuex.Store({
       const id = localStorage.getItem('userId')
       if (id) {
         state.properties = data.filter((property) => property.userId == id)
+      } else {
+        state.properties = data
       }
     },
   },

@@ -134,16 +134,20 @@
           <span v-else> There are no properties yet. </span>
           <div
             v-if="regions.length"
-            class="grid h-24 grid-cols-8 gap-6 my-4 overflow-y-auto"
+            class="grid h-24 grid-cols-8 my-4 overflow-y-auto"
           >
-            <div v-for="(prop, index) in regions" :key="index">
+            <div
+              v-for="(prop, index) in regions"
+              :key="index"
+              class="space-x-2"
+            >
               <button
                 v-show="prop.region"
                 id="state"
                 type="button"
                 class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 style="color: #fff"
-                @click="locateAddress(prop.coordinates, regions)"
+                @click="locateAddress(prop.coordinates, properties)"
               >
                 {{ prop.region }}
               </button>
@@ -155,9 +159,39 @@
             v-if="propertyIndex < properties.length"
             v-for="propertyIndex in propertyToShow"
             class="flex flex-col overflow-hidden rounded-lg shadow-lg"
-            @click="openProperty(properties[propertyIndex])"
           >
-            <div class="flex-shrink-0">
+            <div class="relative flex-shrink-0">
+              <div class="absolute right-2 top-1">
+                <svg
+                  v-if="isAuthenticated"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-8 h-8 text-white cursor-pointer"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  @click="showLogin = true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-8 h-8 text-white cursor-pointer"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </div>
               <img
                 class="object-cover w-full h-32"
                 :src="properties[propertyIndex].main_image"
@@ -165,9 +199,45 @@
               />
             </div>
             <div
-              class="p-4 text-lg font-medium capitalize bg-slate-200 opacity-70"
+              class="flex justify-between p-4 text-lg font-medium capitalize bg-slate-200 opacity-70"
             >
-              {{ properties[propertyIndex].title }}
+              <span>
+                {{ properties[propertyIndex].title }}
+              </span>
+
+              <div class="flex items-center space-x-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5 cursor-pointer"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  @click="openProperty(properties[propertyIndex])"
+                >
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 cursor-pointer"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  @click="showInquiry = true"
+                >
+                  <path
+                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2h-1.528A6 6 0 004 9.528V4z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 10a4 4 0 00-3.446 6.032l-1.261 1.26a1 1 0 101.414 1.415l1.261-1.261A4 4 0 108 10zm-2 4a2 2 0 114 0 2 2 0 01-4 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
             </div>
             <div class="flex flex-col justify-between flex-1 p-4 bg-white">
               <div class="flex-1">
@@ -190,76 +260,27 @@
             </div>
           </div>
 
-          <div
-            v-if="show"
-            class="fixed top-0 left-0 flex items-center justify-center w-full h-full modal"
-          >
-            <div
-              class="absolute w-full h-full bg-gray-900 opacity-50 modal-overlay"
-            ></div>
+          <SelectedProperty
+            v-show="showSelectedProperty"
+            :selectedProperty="selectedProperty"
+            @close-property-modal="showSelectedProperty = false"
+          />
 
-            <div
-              class="z-50 w-full mx-auto overflow-y-auto bg-white rounded shadow-lg modal-container sm:max-w-lg lg:max-w-4xl"
-              style="max-height: 90vh"
-            >
-              <div class="flex justify-end p-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-6 h-6 cursor-pointer"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  @click="show = false"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div v-if="selectedProperty" class="p-4">
-                <div class="grid gap-4 lg:grid-cols-2">
-                  <v-carousel :show-arrows="false">
-                    <v-carousel-item
-                      v-for="(item, i) in selectedProperty.gallery"
-                      :key="i"
-                      :src="item"
-                    ></v-carousel-item>
-                  </v-carousel>
-                  <div class="p-6">
-                    <h2
-                      class="text-2xl font-semibold leading-6 text-gray-900 capitalize"
-                    >
-                      {{ selectedProperty.title }}
-                    </h2>
-                    <p class="mt-4 text-sm text-gray-500">
-                      {{ selectedProperty.address }}
-                    </p>
-                    <p class="mt-8">
-                      <span class="text-4xl font-extrabold text-gray-900"
-                        >${{ selectedProperty.price }}</span
-                      >
-                      {{ ' ' }}
-                      <span class="ml-5 text-base font-medium text-gray-500">
-                        {{ selectedProperty.sqft }} sqft</span
-                      >
-                      <span class="ml-5 text-base font-medium text-gray-500">
-                        Home for {{ selectedProperty.home_type }}
-                      </span>
-                    </p>
-                    <p class="mt-4 text-sm text-gray-500">
-                      {{ selectedProperty.facts_features }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <InquiryForm
+            v-show="showInquiry"
+            @close-inquiry-modal="showInquiry = false"
+          />
+
+          <LoginForm
+            v-show="showLogin"
+            @close-login-modal="showLogin = false"
+          />
         </div>
+
         <button
           v-if="properties.length"
           type="button"
-          class="inline-flex items-center px-4 py-2 mt-2 text-sm font-medium bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="inline-flex items-center px-4 py-2 mt-4 text-sm font-medium bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           @click="propertyToShow += 3"
           style="color: #fff"
         >
@@ -272,12 +293,24 @@
 
 <script>
 import axios from 'axios'
+import SelectedProperty from '@/components/SelectedProperty.vue'
+import InquiryForm from '@/components/InquiryForm.vue'
+import LoginForm from '@/components/LoginForm.vue'
 
 export default {
+  components: {
+    SelectedProperty,
+    InquiryForm,
+    LoginForm,
+  },
+
   data() {
     return {
+      isAuthenticated: false,
       showHeader: false,
-      show: false,
+      showSelectedProperty: false,
+      showInquiry: false,
+      showLogin: true,
       selectedProperty: null,
       properties: [],
       address: null,
@@ -290,7 +323,7 @@ export default {
     axios.get('http://localhost:4000/properties').then((res) => {
       if (res) {
         this.properties = res.data
-        this.initMap(this.properties)
+        this.initMap(this.properties, this.showSelectedProperty)
 
         var resArr = []
         this.properties.filter(function (item) {
@@ -308,7 +341,7 @@ export default {
 
   methods: {
     openProperty(property) {
-      this.show = true
+      this.showSelectedProperty = true
       this.selectedProperty = property
     },
 
@@ -410,7 +443,7 @@ export default {
           })
 
           map.on('click', 'places', (e) => {
-            this.show = true
+            this.showSelectedProperty = true
             this.selectedProperty = JSON.parse(
               e.features[0].properties.property
             )
@@ -487,7 +520,7 @@ export default {
       }
     },
 
-    initMap(properties) {
+    initMap(properties, show) {
       var map
 
       mapboxgl.accessToken =
@@ -600,7 +633,11 @@ export default {
             })
 
             map.on('click', 'places', (e) => {
-              this.show = true
+              if (show) {
+                this.showSelectedProperty = show
+              } else {
+                this.showSelectedProperty = true
+              }
               this.selectedProperty = JSON.parse(
                 e.features[0].properties.property
               )
@@ -692,6 +729,10 @@ export default {
   min-width: 97%;
   max-width: 400px;
 }
-.mapboxgl-ctrl-geocoder {
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right,
+.mapboxgl-ctrl-top-left,
+.mapboxgl-ctrl-top-right {
+  z-index: 0;
 }
 </style>

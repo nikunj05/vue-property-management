@@ -38,7 +38,6 @@
 </template>
 
 <script>
-// import axios from 'axios'
 import Notification from '../Notification.vue'
 
 export default {
@@ -53,6 +52,7 @@ export default {
       name: '',
       type: '',
       message: '',
+      isAdmin: false,
       items: [
         {
           title: 'Dashboard',
@@ -60,14 +60,19 @@ export default {
           to: '/admin/dashboard',
         },
         { title: 'Properties', icon: 'mdi-image', to: '/admin/properties' },
+        { title: 'Inquiries', icon: 'mdi-image', to: '/inquiries' },
       ],
     }
+  },
+  mounted() {
+    this.isAdmin = localStorage.getItem('isAdmin')
   },
 
   methods: {
     logout() {
       localStorage.removeItem('token')
       localStorage.removeItem('userId')
+      localStorage.removeItem('isAdmin')
       alert()
       this.show = true
       this.type = 'success'

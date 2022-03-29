@@ -124,9 +124,13 @@ export default {
         axios
           .post('http://localhost:4000/signin', this.formData)
           .then((res) => {
-            console.log(res)
             localStorage.setItem('token', res.data.data.token)
             localStorage.setItem('userId', res.data.data.userData._id)
+
+            if (res.data.data.userData.email === 'admin@gmail.com') {
+              localStorage.setItem('isAdmin', true)
+            }
+
             this.isAlert = true
             this.isType = 'success'
             this.isMessage = 'Login Successfully.'
